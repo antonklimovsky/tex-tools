@@ -10,12 +10,11 @@ import sys;
 import glob;
 import re;
 
-#list = glob.glob(inputdir+"*.tex")
-
 def process(inputDir, curFile, outfile):
     """
     Note - this works recursively.
     """
+    
     print 'Processing ['+curFile+']...'
     for line in open(inputDir+'/'+curFile):
         if line[0] <> '%':
@@ -30,8 +29,10 @@ def process(inputDir, curFile, outfile):
 		    nextFile = nextFile + '.tex'
                 process(inputDir, nextFile, outfile)
             elif line.startswith('\\bibliography{'):
-                nextFile = 'klimovsky-phd-thesis.bbl'
-                process(inputDir, nextFile, outfile)
+                # Include all bbl files from the input directory
+		for nextFileFullname in glob.glob(inputdir + '/*.bbl'):
+                    nextFile = nextFileFullname[nextFileFullname.rfind('/')+1 : ]
+                    process(inputDir, nextFile, outfile)
             else:
                 outfile.write(line)
 
